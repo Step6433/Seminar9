@@ -9,6 +9,16 @@ struct Queue {
     int count = 0;
 };
 
+void printQueue(const Queue& q) {
+    std::cout << "Queue: [";
+    for (int i = 0; i < q.count; ++i) {
+        if (i > 0) std::cout << ", ";
+        std::cout << q.data[(q.head + i) % Queue::capacity];
+    }
+    std::cout << "] (head=" << q.head << ", tail=" << q.tail
+              << ", count=" << q.count << ")\n";
+}
+
 bool enqueue(Queue& q, int value) {
     if (q.count == Queue::capacity) {
         return false;
@@ -17,6 +27,8 @@ bool enqueue(Queue& q, int value) {
     q.data[q.tail] = value;
     q.tail = (q.tail + 1) % Queue::capacity;
     ++q.count;
+    std::cout << "enqueue(" << value << ") -> ";
+    printQueue(q);
     return true;
 }
 
@@ -28,6 +40,8 @@ bool dequeue(Queue& q, int& value) {
     value = q.data[q.head];
     q.head = (q.head + 1) % Queue::capacity;
     --q.count;
+    std::cout << "dequeue (removed " << value << ") -> ";
+    printQueue(q);
     return true;
 }
 
@@ -48,11 +62,11 @@ void task_10_1_4() {
         std::cout << "First removed: " << value << '\n';
     }
 
-    std::cout << "Add 7 after removal: " << enqueue(q, 7) << '\n';
+    bool added = enqueue(q, 7);
+    std::cout << "Add 7 after removal: " << added << '\n';
 
-    std::cout << "Remaining:";
+    std::cout << "Removing remaining elements:\n";
     while (dequeue(q, value)) {
-        std::cout << ' ' << value;
     }
     std::cout << '\n';
 }
@@ -65,6 +79,15 @@ struct Deque {
     int count = 0;
 };
 
+void printDeque(const Deque& d) {
+    std::cout << "Deque: [";
+    for (int i = 0; i < d.count; ++i) {
+        if (i > 0) std::cout << ", ";
+        std::cout << d.data[(d.head + i) % Deque::capacity];
+    }
+    std::cout << "] (head=" << d.head << ", count=" << d.count << ")\n";
+}
+
 bool pushFront(Deque& d, int value) {
     if (d.count == Deque::capacity) {
         return false;
@@ -73,6 +96,8 @@ bool pushFront(Deque& d, int value) {
     d.head = (d.head + Deque::capacity - 1) % Deque::capacity;
     d.data[d.head] = value;
     ++d.count;
+    std::cout << "pushFront(" << value << ") -> ";
+    printDeque(d);
     return true;
 }
 
@@ -84,6 +109,8 @@ bool pushBack(Deque& d, int value) {
     int index = (d.head + d.count) % Deque::capacity;
     d.data[index] = value;
     ++d.count;
+    std::cout << "pushBack(" << value << ") -> ";
+    printDeque(d);
     return true;
 }
 
@@ -95,6 +122,8 @@ bool popFront(Deque& d, int& value) {
     value = d.data[d.head];
     d.head = (d.head + 1) % Deque::capacity;
     --d.count;
+    std::cout << "popFront (removed " << value << ") -> ";
+    printDeque(d);
     return true;
 }
 
@@ -106,6 +135,8 @@ bool popBack(Deque& d, int& value) {
     int index = (d.head + d.count - 1) % Deque::capacity;
     value = d.data[index];
     --d.count;
+    std::cout << "popBack (removed " << value << ") -> ";
+    printDeque(d);
     return true;
 }
 
@@ -129,9 +160,8 @@ void task_10_1_5() {
     }
     pushBack(d, 30);
 
-    std::cout << "Remaining:";
+    std::cout << "Removing remaining elements:\n";
     while (popFront(d, value)) {
-        std::cout << ' ' << value;
     }
     std::cout << '\n';
 
